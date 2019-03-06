@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Web Socket</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            min-height: 100%;
+        }
+    </style>
+    <link rel="preload" as="style" href="css/main.css" onload="this.rel='stylesheet'" />
+</head>
+
+<body onload="onLoad()">
+    <div class="page">
+    </div>
+    <script>
+        window.globalConfigs = {
+            socketUrl: 'wss://' + location.hostname,
+            socketProtocol: 'echo-protocol'
+        };
+    </script>
+    <script src="js/main.js"></script>
+    <script src="js/ws-client.js"></script>
+    <script>
+        function connectWS() {
+            socketManager.connect(globalConfigs.socketUrl, globalConfigs.socketProtocol, {
+                onConnect: function() {
+                    console.log('Web Socket Connected');
+                },
+                onReceive: function(data) {
+                    
+                }
+            });
+        }
+        function onLoad() {
+            if (socketManager) {
+               connectWS();
+            } else {
+                window.socketOnLoad = function () {
+                    connectWS();
+                };
+            }
+        }
+    </script>
+</body>
+
+</html>
