@@ -18,6 +18,14 @@
             min-height: 100%;
         }
     </style>
+    <style>
+        .guid-box {
+            background-color: #656565;
+            color: white;
+            padding: 5px 15px;
+            box-shadow: 0 0 3px 2px #e4e4e4;
+        }
+    </style>
     <link rel="preload" as="style" href="css/main.css" onload="this.rel='stylesheet'" />
 </head>
 
@@ -33,19 +41,64 @@
     <script src="js/main.js"></script>
     <script src="js/ws-client.js"></script>
     <script>
+        (function (w) {
+            var createTag = function (tName) {
+                return document.createElement(tName);
+            };
+            var renderOnReceive = function (data) {
+                let $page = document.querySelector('.page');
+                $page.innerHTML = data.textContent;
+            };
+            var onGuidChange = function (data) {
+                let $guid = createTag('DIV');
+                $guid.className = 'pos-fixed guid-box';
+                $guid.innerHTML = data.guid;
+                document.body.appendChild($guid);
+            };
+            var PClass = function () {
+                this.guid = null;
+            };
+            PClass.prototype.onReceive = function (data) {
+                let { actionName } = data;
+                switch (actionName) {
+                    case 'EMIT_TO_GUID':
+                        renderOnReceive(data);
+                        break;
+                    case 'NEW_CONNECTION':
+                        this.guid = data.guid;
+                        onGuidChange(data);
+                        break;
+                    default:
+                        break;
+                }
+            };
+            w.Engine = new PClass();
+            w.onEngineLoad && w.onEngineLoad();
+        })(window);
+    </script>
+    <script>
         function connectWS() {
             socketManager.connect(globalConfigs.socketUrl, globalConfigs.socketProtocol, {
-                onConnect: function() {
+                onConnect: function (event) {
                     console.log('Web Socket Connected');
                 },
-                onReceive: function(data) {
-                    
+                onReceive: function (event) {
+                    console.log('Data recevied', event.data);
+                    var data;
+                    try {
+                        data = JSON.parse(event.data);
+                    } catch (e) {
+                        //swallow
+                    }
+                    if (data) {
+                        Engine.onReceive(data);
+                    }
                 }
             });
         }
         function onLoad() {
             if (socketManager) {
-               connectWS();
+                connectWS();
             } else {
                 window.socketOnLoad = function () {
                     connectWS();

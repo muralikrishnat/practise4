@@ -19,7 +19,7 @@
         $that.wsClient = new WebSocket("wss://" + location.hostname, "echo-protocol");
         $that.wsClient.onopen = function (event) {
             $that.isConnected = true;
-            $that.opts.onConnect && $that.opts.onConnect();
+            $that.opts.onConnect && $that.opts.onConnect(event);
         };
         $that.wsClient.onclose = function (event) {
             $that.opts.onClose && $that.opts.onClose(event);
@@ -37,21 +37,25 @@
                     rq.resolve(data.data);
                     delete rq;
                 } else {
-                    $that.opts.onReceive && $that.opts.onReceive(data);
+                    $that.opts.onReceive && $that.opts.onReceive(event);
                 }
             } else {
-                $that.opts.onReceive && $that.opts.onReceive(data);
+                $that.opts.onReceive && $that.opts.onReceive(event);
             }
         };
     };
-    SM.prototype.makeRequest = function (data, actionName) {
+    SM.prototype.makeRequest = function (data, actionName, requestType, opts) {
         let $that = this;
         return new Promise((res, rej) => {
             let requestGuid = guid();
-            requestMapper['G' + requestGuid] = {
-                resolve: res
-            };
-            $that.wsClient.send(JSON.stringify({ guid: requestGuid, actionName: actionName, data: data, requestType: 'LEGACY' }));
+            if (requestType && requestType === 'LEGACY') {
+                requestMapper['G' + requestGuid] = {
+                    resolve: res
+                };
+            }
+            let sOpts = { guid: requestGuid, actionName: actionName, data: data, requestType: requestType };
+            sOpts = Object.assign({}, sOpts, opts);
+            $that.wsClient.send(JSON.stringify(sOpts));
         });
     };
     w.socketManager = new SM();

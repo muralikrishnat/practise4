@@ -1,4 +1,5 @@
 var WebSocketServer = require('websocket').server;
+var { makeMeAdmin } = require('./actions');
 var guid = function () {
     function s4() {
         return Math.floor((1 + Math.random()) * 0x10000)
@@ -8,19 +9,39 @@ var guid = function () {
     return s4() + s4() + s4() + s4() + s4() + s4();
 };
 var connectionArray = [],
-    wsArray = [],
+    adminConnections = [],
     connectionMapper = {};
-var requestJobMapper = {};
 var connectionManager = {
     add: function (guid, connection) {
-        connectionArray.push('C' + guid);
-        connectionMapper['C' + guid] = {
+        connectionArray.push({
+            guid: guid,
             connection: connection
-        };
+        });
     },
     remove: function (guid) {
-        connectionArray = connectionArray.filter(f => f === 'C' + guid);
-        delete connectionMapper['C' + guid];
+        connectionArray = connectionArray.filter(f => f.guid != guid);
+    },
+    get: function () {
+        return connectionArray.map((m, i) => {
+            return { guid: m.guid, index: i };
+        });
+    },
+    set: function (guid, opts) {
+        connectionArray.forEach(c => {
+            if (c.guid === guid) {
+                Object.keys(opts).forEach(k => {
+                    c[k] = opts[k];
+                });
+            }
+        });
+    },
+    sendToConnection: function ({ toGuid, data, actionName }) {
+        connectionArray.forEach(c => {
+            if (c.guid === toGuid) {
+                data['actionName'] = actionName;
+                c.connection.sendUTF(JSON.stringify(data));
+            }
+        });
     }
 };
 
@@ -28,6 +49,33 @@ var getAsyncTime = function (cb) {
     setTimeout(() => {
         cb({ time: (new Date).toString() });
     }, 200);
+};
+
+var broadCastData = function (data, opts = {}) {
+    connectionArray.forEach(c => {
+        if (opts.isOnlyAdmin) {
+            if (c.isAdmin) {
+                c.connection.sendUTF(JSON.stringify(data));
+            }
+        } else {
+            c.connection.sendUTF(JSON.stringify(data));
+        }
+    });
+};
+var sendToAdmins = function (data) {
+    broadCastData(data, {
+        isOnlyAdmin: true
+    });
+};
+var log = function () {
+    // console.log({
+    //     connectionArray: connectionArray.length,
+    //     connectionArrayGuid: connectionArray.map(c => c.guid),
+    //     connections: connectionManager.get()
+    // });
+    // console.log({
+    //     connections: connectionManager.get()
+    // })
 };
 function initWS(server) {
     let wsServer = new WebSocketServer({
@@ -37,21 +85,39 @@ function initWS(server) {
 
     wsServer.on('request', function (request) {
         var connection = request.accept('echo-protocol', request.origin);
-        console.log((new Date()) + ' Connection accepted.');
         connection.on('message', function (message) {
             if (message.type === 'utf8') {
                 var datafromClient = JSON.parse(message.utf8Data);
-                console.log('Received Message: ', message.utf8Data);
-                // connection.sendUTF(JSON.stringify(datafromClient));
-                if (datafromClient.requestType && datafromClient.requestType === 'LEGACY') {
-                    getAsyncTime(function (data) {
-                        connection.sendUTF(JSON.stringify({
-                            data,
-                            guid: datafromClient.guid
-                        }));
-                    });
-                } else {
-
+                var { requestType, actionName } = datafromClient;
+                switch (actionName) {
+                    case 'MAKE_ME_ADMIN':
+                        connectionManager.set(connection.guid, {
+                            isAdmin: true
+                        });
+                        sendToAdmins({
+                            connections: connectionManager.get(),
+                            actionName: 'CONNECTIONS'
+                        });
+                        break;
+                    case 'EMIT_TO_GUID':
+                        connectionManager.sendToConnection({
+                            toGuid: datafromClient.toGuid,
+                            data: datafromClient.data,
+                            actionName: 'EMIT_TO_GUID'
+                        });
+                        break;
+                    case 'GET_ME_GUID': 
+                        let cGuid = guid();
+                        connection.guid = cGuid;
+                        connectionManager.add(cGuid, connection);
+                        connection.sendUTF(JSON.stringify({ "guid": cGuid, actionName: 'NEW_CONNECTION', data: { "isConnected": true } }));
+                        sendToAdmins({
+                            connections: connectionManager.get(),
+                            actionName: 'CONNECTIONS'
+                        });
+                        break;
+                    default:
+                        break;
                 }
             }
             else if (message.type === 'binary') {
@@ -60,15 +126,20 @@ function initWS(server) {
             }
         });
         connection.on('close', function (reasonCode, description) {
-            console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' disconnected.');
             connectionManager.remove(connection.guid);
+            log();
         });
 
         if (connection.connected) {
-            let cGuid = guid();
-            connection.guid = cGuid;
-            connectionManager.add(cGuid, connection);
-            connection.sendUTF(JSON.stringify({ "guid": cGuid, data: { "isConnected": true } }));
+            // let cGuid = guid();
+            // connection.guid = cGuid;
+            // connectionManager.add(cGuid, connection);
+            // log();
+            // connection.sendUTF(JSON.stringify({ "guid": cGuid, actionName: 'NEW_CONNECTION', data: { "isConnected": true } }));
+            // sendToAdmins({
+            //     connections: connectionManager.get(),
+            //     actionName: 'CONNECTIONS'
+            // });
         }
     });
 }

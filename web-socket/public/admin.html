@@ -23,9 +23,6 @@
 
 <body onload="onLoad()">
     <div class="page">
-        <div class="container">
-
-        </div>
     </div>
     <script>
         window.globalConfigs = {
@@ -36,19 +33,98 @@
     <script src="js/main.js"></script>
     <script src="js/ws-client.js"></script>
     <script>
+        (function (w) {
+            var createTag = function (tName) {
+                return document.createElement('DIV');
+            };
+            var renderConnections = function (data, myGuid) {
+                if (data && data.connections) {
+                    let $renderConnections = document.querySelector('.render-connections');
+                    $renderConnections.innerHTML = '';
+                    data.connections.forEach(c => {
+                        if (myGuid != c.guid) {
+                            let elem = createTag("DIV");
+                            elem.setAttribute('data-guid', c.guid);
+                            elem.innerHTML = `
+                            <div>
+                                ${c.guid}
+                            </div>
+                            <div>
+                                <div data-guid="${c.guid}" contenteditable="true" onkeyup="Engine.onTextChange(event)" style="min-height: 400px;"></div>
+                            </div>
+                        `;
+                            $renderConnections.appendChild(elem);
+                        }
+                    });
+                }
+            };
+
+            var PClass = function () {
+                this.guid = null;
+            };
+            PClass.prototype.onTextChange = function (e) {
+                socketManager.makeRequest({
+                    textContent: e.target.tagName === 'TEXTAREA' ? e.target.value : e.target.innerHTML,
+                }, "EMIT_TO_GUID", '', {
+                        toGuid: e.target.getAttribute('data-guid')
+                    });
+            }
+            PClass.prototype.onReceive = function (data) {
+                let { actionName } = data;
+                switch (actionName) {
+                    case 'CONNECTIONS':
+                        renderConnections(data, this.guid);
+                        break;
+                    case 'NEW_CONNECTION':
+                        this.guid = data.guid;
+                        break;
+                    default:
+                        break;
+                }
+            };
+            document.querySelector('.page').innerHTML = `
+                <div class="render-connections"></div>
+            `;
+            w.Engine = new PClass();
+            w.onEngineLoad && w.onEngineLoad();
+        })(window);
+    </script>
+    <script>
         function connectWS() {
             socketManager.connect(globalConfigs.socketUrl, globalConfigs.socketProtocol, {
                 onConnect: function () {
                     console.log('Web Socket Connected');
+                    socketManager.makeRequest({}, "MAKE_ME_ADMIN", "LEGACY")
+                },
+                onReceive: function (event) {
+                    console.log('Data recevied', event.data);
+                    var data;
+                    try {
+                        data = JSON.parse(event.data);
+                    } catch (e) {
+                        //swallow
+                    }
+                    if (data) {
+                        Engine.onReceive(data);
+                    }
                 }
             });
         }
-        function onLoad() {
-            if (socketManager) {
+        function checkEngineLoad() {
+            if (window.Engine) {
                 connectWS();
             } else {
-                window.socketOnLoad = function () {
+                window.onEngineLoad = function () {
                     connectWS();
+                };
+            }
+        }
+        function onLoad() {
+            if (window.socketManager) {
+                checkEngineLoad();
+            } else {
+                window.socketOnLoad = function () {
+                    checkEngineLoad();
                 };
             }
         }

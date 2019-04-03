@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Page Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body>
+    <div class="parent">
+
+    </div>
+    <script>
+        (function () {
+            let $parent = document.querySelector('.parent');
+            let $frag = document.createDocumentFragment();
+
+            let $button = document.createElement('BUTTON');
+
+            $button.innerHTML = " Remove Me ";
+            $button.onclick = function () {
+                $button.remove();
+
+                let $otherElem = document.createElement('DIV');
+                $otherElem.innerHTML = "I'm the other element";
+                $frag.appendChild($otherElem);
+                $parent.appendChild($frag);
+            };
+            $frag.appendChild($button);
+
+            let $otherElem = document.createElement('DIV');
+            $otherElem.innerHTML = "I'm the other element";
+            $frag.appendChild($otherElem);
+
+
+            $parent.appendChild($frag);
+
+        })();
+    </script>
+</body>
+
+</html>
