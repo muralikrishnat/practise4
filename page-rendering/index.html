@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Page Rendering</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- <link rel="stylesheet" type="text/css" media="screen" href="main.css" /> -->
+    <!-- <script src="main.js"></script> -->
+
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            min-height: 100vh;
+        }
+
+        .page {
+            min-height: 100vh;
+        }
+
+        .youtube-video-holder {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        .youtube-top {
+            flex: 1;
+        }
+
+        .youtube-wrapper {
+            background-color: #161961;
+            flex: 6;
+        }
+
+        .youtube-description {
+            background-color: #a8b8c8;
+            flex: 6;
+        }
+
+        .youtube-elem {
+            background-color: #a4b4c4;
+        }
+
+        @media only screen and (orientation: landscape) {
+            .youtube-top {
+                flex: 0;
+            }
+
+            .youtube-wrapper {
+                flex: 5;
+            }
+
+            .youtube-description {
+                flex: 2;
+            }
+        }
+
+        @media only screen and (min-width: 1024px) {
+            .youtube-top {
+                flex: 1;
+            }
+
+            .youtube-wrapper {
+                flex: 5;
+            }
+
+            .youtube-description {
+                flex: 2;
+            }
+        }
+    </style>
+</head>
+
+<body onload="onBodyLoad()">
+    <div class="page">
+        <div class="youtube-video-holder">
+            <div class="youtube-top">
+
+            </div>
+            <div class="youtube-wrapper">
+                <div class="youtube-elem">
+
+                </div>
+            </div>
+            <div class="youtube-description">
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function log(...args) {
+            console.log(...args);
+        }
+        function pxToNumber(px) {
+            return parseFloat(px);
+        }
+        function renderYoutube() {
+            // let { innerWidth, innerHeight } = window;
+            // let yHolder = document.querySelector('.youtube-wrapper');
+            // let youtubeElem = 
+            // if (yHolder) {
+
+            //     let aWidth = pxToNumber(getComputedStyle(yHolder, null).width);
+            //     let aHeight = pxToNumber(getComputedStyle(yHolder, null).height);
+            //     let cHeight = pxToNumber(getComputedStyle(yHolder, null).height);
+
+            //     let dime = { width: aWidth, height: aHeight };
+
+            //     if (innerWidth > innerHeight) {
+            //         log('landscape');
+            //         // cHeight = (aWidth / 16) * 9;
+            //     } else {
+            //         log('portrait');
+            //         cHeight = (aWidth / 16) * 9;
+            //     }
+            //     yWrapper.style.height = dime.height + 'px';
+            //     yWrapper.style.width = dime.width + 'px';
+            // }
+
+        }
+        function onBodyLoad() {
+            window.addEventListener('resize', () => {
+                // renderYoutube();
+            });
+            // renderYoutube();
+        }
+
+    </script>
+</body>
+
+</html>
