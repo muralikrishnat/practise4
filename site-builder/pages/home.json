@@ -9,18 +9,6 @@
             "attributes": [
                 {
                     "name": "ta-component",
-                    "value": "header"
-                }
-            ],
-            "data": {
-                "logo": "TA Digital 2"
-            }
-        },
-        {
-            "name": "DIV",
-            "attributes": [
-                {
-                    "name": "ta-component",
                     "value": "footer"
                 }
             ]
@@ -34,8 +22,29 @@
                 }
             ],
             "data": {
+                "logo": "TA Digital updated"
+            }
+        },
+        {
+            "name": "DIV",
+            "attributes": [
+                {
+                    "name": "ta-component",
+                    "value": "header"
+                }
+            ],
+            "data": {
                 "logo": "TechAspect 3"
             }
+        },
+        {
+            "name": "DIV",
+            "attributes": [
+                {
+                    "name": "ta-component",
+                    "value": "footer"
+                }
+            ]
         }
     ]
 }

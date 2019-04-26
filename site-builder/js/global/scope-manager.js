@@ -29,18 +29,41 @@ var scopeManager = (function () {
                     elem.className = elem.className + ' hidden';
                 }
             });
+            scopeElem.querySelectorAll('[ta-attr]').forEach(elem => {
+                let condition = elem.getAttribute('ta-attr');
+                let variablesStr = 'var ' + Object.keys(scope).map(k => {
+                    return k + '=' + JSON.stringify(scope[k]);
+                }).join(',') + ';';
+
+                let fnToExecute = new Function(`
+                    ${variablesStr}
+                    return ${condition}; 
+                `);
+                try {
+                    var conditionFlag = fnToExecute();
+                    Object.keys(conditionFlag).forEach(c => {
+                        if (conditionFlag[c]){
+                            elem.setAttribute(c, true);
+                        } else {
+                            elem.removeAttribute(c);
+                        }
+                    });
+                } catch (e) {
+                    //swallow
+                }
+            });
 
             this.scanElement(scopeElem, scope);
 
         }
     };
-    S.prototype.executeCode = function(code, scope) {
+    S.prototype.executeCode = function (code, scope) {
         let variablesStr = 'var ' + Object.keys(scope).map(k => {
             return k + '=' + JSON.stringify(scope[k]);
         }).join(',') + ';';
         let codeToExecute = code, parsedCode = code;
         try {
-            var fnToExecute = new Function(variablesStr +' return `' + codeToExecute +'`;');
+            var fnToExecute = new Function(variablesStr + ' return `' + codeToExecute + '`;');
             parsedCode = fnToExecute();
             parsedCode = parsedCode.replace('undefined', '');
         } catch (e) {
@@ -61,9 +84,9 @@ var scopeManager = (function () {
                 this.scanElement(item, scope);
             }
         } else {
-            elem.innerHTML = this.executeCode(elem.innerHTML, scope).replace('undefined','');
+            elem.innerHTML = this.executeCode(elem.innerHTML, scope).replace('undefined', '');
         }
-        
+
     }
     S.prototype.applyBind = function () {
 

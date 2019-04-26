@@ -15,33 +15,23 @@
     <div class="page-wrapper">
 
     </div>
-    <script src="/js/global/store-manager.js"></script>
-    <script src="/js/global/scope-manager.js"></script>
-    <script src="/js/global/dom-manager.js"></script>
-    <script src="/js/global/component-manager.js"></script>
-    <script src="/js/global.js"></script>
-    <script src="/js/sandbox.js"></script>
-    <script>
-        let pageUrl = '/index';
-        location.search.replace('?', '').split('&').forEach(f => {
-            if (f.split('=')[0] === 'page' && f.split('=')[1] && f.split('=')[1].length > 0) {
-                pageUrl = f.split('=')[1];
-            }
-        })
-        sandbox.load(pageUrl.indexOf('/') != 0 ? '/' + pageUrl : pageUrl);
-    </script>
+
     <script type="text/template" id="editor-comp-item">
         <div class="c-items__item">
             <div class="d-flex">
                 <div>Component Name: ${componentName}</div>
-                <button ta-if="foundComponent"
+                <button ta-attr="{ 'disabled': !foundComponent}"
                     onclick="editorManager.editData('${item.id}', '${i}', 'COMP', '.comp-data-elem-${i}')"> Set Data </button>
-                <button ta-if="foundComponent"
+                <button ta-attr="{ 'disabled': !foundComponent}"
                     onclick="editorManager.saveData('${item.id}', '${i}', 'COMP', '.comp-data-elem-${i}')"> Save Data </button>
-                <button ta-if="foundComponent" onclick="editorManager.removeComponent('${item.id}', '${i}')"> &#9747; Component
+                <button ta-attr="{ 'disabled': !foundComponent}"
+                    onclick="editorManager.removeComponent('${item.id}', '${i}')"> &#9747; Component
                 </button>
-                <button ta-if="i > 0" onclick="editorManager.moveComp('${item.id}', '${i}', 'UP')"> Move Up </button>
-                <button ta-if="i < compsLength -1" onclick="editorManager.moveComp('${item.id}', '${i}', 'DOWN')"> Move Down
+                <button ta-attr="{ 'disabled': !(i > 0)}"
+                    onclick="editorManager.moveComp('${item.id}', '${i}', 'UP')"> Move Up 
+                </button>
+                <button ta-attr="{ 'disabled': !(i < compsLength -1)}"
+                    onclick="editorManager.moveComp('${item.id}', '${i}', 'DOWN')"> Move Down
                 </button>
             </div>
             <div>
@@ -77,6 +67,9 @@
             <button onclick="editorManager.addComponent('.txt-new-component')"> Add Component </button>
         </div>
     </script>
+
+    <script src="/js/index.js"></script>
+
     <script>
         var editorManager = (function () {
             var pageMeta = null, modalOverlay = null, allComponents = [];
@@ -261,14 +254,41 @@
                     }
                     this.renderPageEditor(pageMeta);
                 },
+
                 load: function () {
                     let $body = document.querySelector('body');
                     let editorButton = document.createElement('DIV');
+                    editorButton.onmousedown = function (event) {
+                        window.onmousemove = function (event) {
+                            let x = event.clientX;
+                            let y = event.clientY;
+                            editorButton.style.top = (y - 10) + 'px';
+                            editorButton.style.left = (x - 20) + 'px';
+                        };
+
+                        window.onmouseup = function () {
+                            window.onmousemove = null;
+                        };
+                    };
+                    editorButton.ondra
                     editorButton.innerHTML = `
-                        <button class="editor-btn-wrapper__button" onclick="editorManager.openEditor()"> Edit Page </button>
+                        <button style="cursor:move;">Move</button>
+                        <button class="editor-btn-wrapper__button" onclick="editorManager.openEditor()"> Edit Page in Modal </button>
+                        <button onclick="editorManager.editPage()"> Inline Edit </button>
+                        <button onclick="editorManager.previewPage()"> Preview </button>
+                        <button onclick="editorManager.editPageProperties()"> Page Properties </button>
                     `;
                     editorButton.className = 'editor-btn-wrapper';
                     $body.appendChild(editorButton);
+                },
+                editPage: function () {
+
+     },
+                previewPage: function () {
+
+                },
+                editPageProperties: function () {
+
                 }
             };
             var E = function () { };
@@ -277,6 +297,25 @@
         })();
 
         editorManager.load();
+    </script>
+
+    <script>
+        var loadPageData = function () {
+            let pageUrl = '/index';
+            location.search.replace('?', '').split('&').forEach(f => {
+                if (f.split('=')[0] === 'page' && f.split('=')[1] && f.split('=')[1].length > 0) {
+                    pageUrl = f.split('=')[1];
+                }
+            })
+            sandbox.onPageLoad(pageUrl.indexOf('/') != 0 ? '/' + pageUrl : pageUrl);
+        }
+        if (window.onSandboxLoaded || window.sandbox) {
+            loadPageData();
+        } else {
+            window.sandboxload = function () {
+                loadPageData();
+            }
+        }
     </script>
     <script>
         // var iframeManager = (function () {

@@ -31,6 +31,11 @@ module.exports = function (options) {
                         let componentMetaPath = path.join(__dirname, 'site-builder', 'components', 'meta.json');
                         
                     }
+                    if (request.url.indexOf('/api/page') === 0) {
+                        let filePath = path.join(__dirname, 'site-builder', 'pages', jsonData.pagePath + '.json');
+                        var fileContent = fs.readFileSync(filePath, { encoding: 'utf-8' });
+                        
+                    }
                 }
                 response.writeHead(200, {
                     'Content-Type': 'application/json'

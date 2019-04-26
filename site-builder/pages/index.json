@@ -1,7 +1,7 @@
 {
     "name": "DIV",
     "data": {
-        "title": "Index Page 9"
+        "title": "Index Page chned"
     },
     "children": [
         {
@@ -13,17 +13,16 @@
             "attributes": [
                 {
                     "name": "ta-component",
-                    "value": "pagination"
-                },
-                {
-                    "name": "page-count",
-                    "value": "8"
+                    "value": "footer"
                 }
-            ],
-            "children": [
+            ]
+        },
+        {
+            "name": "DIV",
+            "attributes": [
                 {
-                    "name": "DIV",
-                    "value": "testing"
+                    "name": "ta-component",
+                    "value": "footer"
                 }
             ]
         },
@@ -36,26 +35,8 @@
                 }
             ],
             "data": {
-                "logo": "TA Digital v2"
+                "logo": "TA Digital v666"
             }
-        },
-        {
-            "name": "DIV",
-            "attributes": [
-                {
-                    "name": "ta-component",
-                    "value": "footer"
-                }
-            ]
-        },
-        {
-            "name": "DIV",
-            "attributes": [
-                {
-                    "name": "ta-component",
-                    "value": "footer"
-                }
-            ]
         }
     ]
 }

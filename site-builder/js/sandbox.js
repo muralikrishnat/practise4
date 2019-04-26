@@ -14,7 +14,7 @@ var sandbox = (function () {
             c.render();
         });
     };
-    S.prototype.getAllComponents = function() {
+    S.prototype.getAllComponents = function () {
         return componentManager.getAllComponents();
     };
     S.prototype.nextTick = function (cb, timeout) {
@@ -29,16 +29,17 @@ var sandbox = (function () {
     S.prototype.getPageUrl = function () {
         return pageUrl;
     };
-    S.prototype.scope = function(elem, scope) {
+    S.prototype.scope = function (elem, scope) {
         return storeManager.scope(elem, scope)
     };
-    S.prototype.applyScope = function(elem, scope) {
+    S.prototype.applyScope = function (elem, scope) {
         scopeManager.applyScope(elem, scope);
     };
     S.prototype.renderPage = function (html) {
         let $pageWrapper = document.querySelector('.page-wrapper');
         pageMeta = html;
         $pageWrapper.innerHTML = domManager.convert(html, 'HTML_STR');
+        
         scopeManager.applyScope($pageWrapper, pageMeta.data);
         sandbox.nextTick(() => {
             let pagecomps = document.querySelectorAll('[ta-component]');
@@ -79,18 +80,19 @@ var sandbox = (function () {
     S.prototype.closeModal = function () {
         var $body = document.querySelector('body');
         var modalOverlay = document.querySelector('.modal-overlay');
-        modalOverlay.className = modalOverlay.className + ' hidden '; 
+        modalOverlay.className = modalOverlay.className + ' hidden ';
         $body.className = $body.className.replace('modal-open', '');
     };
 
-    let sandbox = new S();
-    window.onload = () => {
+    S.prototype.onPageLoad = function (url) {
         // sandbox.bootstrapComponents();
+        pageUrl = url;
         apiManager.get({
-            url: '/pages' + pageUrl + '.json'
+            url: '/api/page?pageUrl=' + sandbox.getPageUrl()
         }).then((html) => {
             sandbox.renderPage(html);
         });
     };
+    let sandbox = new S();
     return sandbox;
 })();

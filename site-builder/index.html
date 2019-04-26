@@ -6,28 +6,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Site Builder</title>
+    <!-- <link rel="stylesheet/less" href="css/themes/default.less" /> -->
     <link rel="stylesheet/less" href="css/global.less" />
     <script src="/js/vendor/less.min.js"></script>
 
-    <link rel="import" href="bootstrap.html">
 </head>
 
 <body>
     <div class="page-wrapper">
 
     </div>
-    <script src="/js/global/store-manager.js"></script>
-    <script src="/js/global/scope-manager.js"></script>
-    <script src="/js/global/dom-manager.js"></script>
-    <script src="/js/global/component-manager.js"></script>
-    <script src="/js/global.js"></script>
-    <script src="/js/sandbox.js"></script>
+    <script src="/js/index.js"></script>
     <script>
-        let pageUrl = location.pathname;
-        if (pageUrl.replace('/', '').length === 0) {
-            pageUrl = '/index';
+        var loadPageData = function () {
+            let pageUrl = location.pathname;
+            if (pageUrl.replace('/', '').length === 0) {
+                pageUrl = '/index';
+            }
+            sandbox.onPageLoad(pageUrl);
         }
-        sandbox.load(pageUrl);
+        if (window.onSandboxLoaded || window.sandbox) {
+            loadPageData();
+        } else {
+            window.sandboxload = function () {
+                loadPageData();
+            }
+        }
     </script>
 </body>
 
