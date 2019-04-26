@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Page Editor</title>
+    <link rel="stylesheet/less" href="css/global.less" />
+    <link rel="stylesheet/less" href="css/editor.less" />
+    <script src="js/vendor/less.min.js"></script>
+</head>
+
+<body>
+    <div class="page-wrapper">
+
+    </div>
+    <script src="/js/global/store-manager.js"></script>
+    <script src="/js/global/scope-manager.js"></script>
+    <script src="/js/global/dom-manager.js"></script>
+    <script src="/js/global/component-manager.js"></script>
+    <script src="/js/global.js"></script>
+    <script src="/js/sandbox.js"></script>
+    <script>
+        let pageUrl = '/index';
+        location.search.replace('?', '').split('&').forEach(f => {
+            if (f.split('=')[0] === 'page' && f.split('=')[1] && f.split('=')[1].length > 0) {
+                pageUrl = f.split('=')[1];
+            }
+        })
+        sandbox.load(pageUrl.indexOf('/') != 0 ? '/' + pageUrl : pageUrl);
+    </script>
+    <script type="text/template" id="editor-comp-item">
+        <div class="c-items__item">
+            <div class="d-flex">
+                <div>Component Name: ${componentName}</div>
+                <button ta-if="foundComponent"
+                    onclick="editorManager.editData('${item.id}', '${i}', 'COMP', '.comp-data-elem-${i}')"> Set Data </button>
+                <button ta-if="foundComponent"
+                    onclick="editorManager.saveData('${item.id}', '${i}', 'COMP', '.comp-data-elem-${i}')"> Save Data </button>
+                <button ta-if="foundComponent" onclick="editorManager.removeComponent('${item.id}', '${i}')"> &#9747; Component
+                </button>
+                <button ta-if="i > 0" onclick="editorManager.moveComp('${item.id}', '${i}', 'UP')"> Move Up </button>
+                <button ta-if="i < compsLength -1" onclick="editorManager.moveComp('${item.id}', '${i}', 'DOWN')"> Move Down
+                </button>
+            </div>
+            <div>
+                <div class="comp-data-elem-${i}">
+                    ${dataStr}
+                </div>
+            </div>
+        </div>
+    </script>
+
+    <script type="text/template" id="editor-modal-html">
+        <div class="c-list">
+            <div class="c-list__data">
+                <div>
+                    <button onclick="editorManager.editData(null, null, 'PAGE', '.page-data-elem')"> Set Data </button>
+                    <button onclick="editorManager.saveData(null, null, 'PAGE', '.page-data-elem')"> Save Data </button>
+                </div>
+                <div class="page-data-elem">
+                    ${pageDataStr}     
+                </div>    
+            </div>
+            <div class="c-list__tile"> Components List </div>
+            <div class="c-list__items c-items">
+                ${componentsHtml}
+            </div>
+        </div>
+
+        <div class="">
+            <input type="text" class="txt-new-component" list="components"/>
+            <datalist id="components">
+                ${componentsHtmlStr}
+            </datalist>
+            <button onclick="editorManager.addComponent('.txt-new-component')"> Add Component </button>
+        </div>
+    </script>
+    <script>
+        var editorManager = (function () {
+            var pageMeta = null, modalOverlay = null, allComponents = [];
+            var editor = {
+                saveData: function (compId, compIndex, setType, elemClass) {
+                    if (pageMeta) {
+                        var elem = document.querySelector(elemClass);
+                        var innerHTML = elem.innerHTML.trim();
+                        if (setType === 'COMP') {
+                            for (var i = 0; i < pageMeta.children.length; i++) {
+                                if (i == compIndex) {
+                                    let comp = pageMeta.children[i];
+                                    try {
+                                        comp.data = JSON.parse(innerHTML);
+                                        apiManager.post({
+                                            url: '/api/page',
+                                            body: {
+                                                pagePath: sandbox.getPageUrl(),
+                                                fileContent: pageMeta
+                                            }
+                                        });
+                                    } catch (e) {
+                                        //swallow
+                                    }
+                                    break;
+                                }
+                            }
+                        } else if (setType === 'PAGE') {
+                            if (elem) {
+                                try {
+                                    pageMeta.data = JSON.parse(innerHTML);
+                                    apiManager.post({
+                                        url: '/api/page',
+                                        body: {
+                                            pagePath: sandbox.getPageUrl(),
+                                            fileContent: pageMeta
+                                        }
+                                    });
+                                } catch (e) {
+                                    //swallow
+                                }
+                            }
+                        }
+                        sandbox.renderPage(pageMeta);
+                        elem.removeAttribute('contenteditable');
+                    }
+                },
+                editData: function (compId, compIndex, setType, elemClass) {
+                    var editElem = document.querySelector(elemClass);
+                    if (editElem) {
+                        editElem.setAttribute('contenteditable', 'true');
+                    }
+                },
+                moveComp: function (compId, compIndex, direction) {
+                    var compToMove = pageMeta.children.splice(compIndex, 1);
+                    if (compToMove.length > 0) {
+                        if (direction === 'UP') {
+                            pageMeta.children.splice(compIndex - 1, 0, compToMove[0]);
+                        } else {
+                            pageMeta.children.splice(compIndex + 1, 0, compToMove[0]);
+                        }
+                        this.renderPageEditor(pageMeta);
+                        sandbox.renderPage(pageMeta);
+                        apiManager.post({
+                            url: '/api/page',
+                            body: {
+                                pagePath: sandbox.getPageUrl(),
+                                fileContent: pageMeta
+                            }
+                        });
+                    }
+                },
+                removeComponent: function (compId, compIndex) {
+                    let newChildren = [];
+                    for (var i = 0; i < pageMeta.children.length; i++) {
+                        let item = pageMeta.children[i];
+                        if (i == compIndex) {
+
+                        } else {
+                            newChildren.push(item);
+                        }
+                    }
+                    pageMeta.children = newChildren;
+                    this.renderPageEditor(pageMeta);
+                    sandbox.renderPage(pageMeta);
+                    apiManager.post({
+                        url: '/api/page',
+                        body: {
+                            pagePath: sandbox.getPageUrl(),
+                            fileContent: pageMeta
+                        }
+                    });
+                },
+                addComponent: function (inputClass) {
+                    var txtNewComponent = document.querySelector(inputClass);
+                    if (txtNewComponent && txtNewComponent.value && txtNewComponent.value.length > 0) {
+                        let newComponentToAdd = allComponents.filter(c => c.name === txtNewComponent.value);
+                        if (newComponentToAdd.length > 0) {
+                            pageMeta.children.push({
+                                "name": "DIV",
+                                "attributes": [
+                                    {
+                                        "name": "ta-component",
+                                        "value": newComponentToAdd[0].name
+                                    }
+                                ]
+                            });
+                            txtNewComponent.value = '';
+                            this.renderPageEditor(pageMeta);
+                            sandbox.renderPage(pageMeta);
+                            apiManager.post({
+                                url: '/api/page',
+                                body: {
+                                    pagePath: sandbox.getPageUrl(),
+                                    fileContent: pageMeta
+                                }
+                            });
+                        }
+                    }
+                },
+                renderPageEditor: function (pageMeta) {
+                    var pageDataStr = '';
+                    if (pageMeta.data) {
+                        pageDataStr = JSON.stringify(pageMeta.data);
+                    }
+                    var componentsHtml = '';
+                    var compsLength = pageMeta.children.length;
+                    let editorCompItemHTML = document.querySelector('#editor-comp-item').innerHTML;
+                    let editorModalHTML = document.querySelector('#editor-modal-html').innerHTML;
+                    for (var i = 0; i < compsLength; i++) {
+                        let item = pageMeta.children[i];
+                        let attributes = item.attributes || [];
+                        let componentName = '', foundComponent = false;
+                        for (let j = 0; j < attributes.length; j++) {
+                            let attribute = attributes[j];
+                            if (attribute.name === 'ta-component') {
+                                componentName = attribute.value;
+                                foundComponent = true;
+                            }
+                        }
+                        let dataString = item.data ? JSON.stringify(item.data) : '';
+                        if (!foundComponent) {
+                            componentName = 'Plain Text';
+                        }
+                        var tempDoc = document.createElement('DIV');
+                        tempDoc.innerHTML = editorCompItemHTML;
+
+                        sandbox.applyScope(tempDoc, {
+                            foundComponent: foundComponent,
+                            i: i,
+                            compsLength: compsLength,
+                            item: item,
+                            dataStr: item.data ? JSON.stringify(item.data) : '',
+                            componentName: componentName
+                        });
+                        componentsHtml += tempDoc.innerHTML;
+                    }
+                    allComponents = sandbox.getAllComponents();
+                    var componentsHtmlStr = '';
+                    for (let i = 0; i < allComponents.length; i++) {
+                        componentsHtmlStr += `<option value="${allComponents[i].name}">`;
+                    }
+                    var tempDoc = document.createElement('DIV');
+                    tempDoc.innerHTML = editorModalHTML;
+
+                    sandbox.applyScope(tempDoc, {
+                        pageDataStr: pageDataStr,
+                        componentsHtml: componentsHtml,
+                        componentsHtmlStr: componentsHtmlStr
+                    });
+                    var modalContent = tempDoc.innerHTML;
+                    if (!modalOverlay) {
+                        modalOverlay = sandbox.openModal(modalContent);
+                    } else {
+                        modalOverlay.querySelector('.modal-html').innerHTML = modalContent;
+                        modalOverlay.className = modalOverlay.className.replace('hidden', '');
+                    }
+                },
+                openEditor: function () {
+                    if (!pageMeta) {
+                        pageMeta = sandbox.getPageMeta();
+                    }
+                    this.renderPageEditor(pageMeta);
+                },
+                load: function () {
+                    let $body = document.querySelector('body');
+                    let editorButton = document.createElement('DIV');
+                    editorButton.innerHTML = `
+                        <button class="editor-btn-wrapper__button" onclick="editorManager.openEditor()"> Edit Page </button>
+                    `;
+                    editorButton.className = 'editor-btn-wrapper';
+                    $body.appendChild(editorButton);
+                }
+            };
+            var E = function () { };
+            E.prototype = editor;
+            return new E();
+        })();
+
+        editorManager.load();
+    </script>
+    <script>
+        // var iframeManager = (function () {
+        //     window.editorIframe = null;
+        //     var E = function () { };
+        //     E.prototype.generateIframe = function (url, opts) {
+        //         editorIframe = document.createElement('IFRAME');
+        //         editorIframe.src = url;
+        //         editorIframe.className = 'editor-iframe';
+        //         document.body.appendChild(editorIframe);
+        //         window.addEventListener("message", this.dataFromIframe, false);
+        //     };
+        //     E.prototype.sendDataToIframe = function (data) {
+        //         editorIframe.contentWindow.postMessage(data, '*');
+        //     };
+        //     E.prototype.dataFromIframe = function (event) {
+        //         try {
+        //             let data = JSON.parse(event.data);
+        //             if (data && data.method) {
+        //                 switch (data.method) {
+        //                     case 'PAGE_META':
+        //                         iframeManager.sendDataToIframe("test");
+        //                         break;
+        //                     default:
+        //                         break;
+        //                 }
+        //             }
+        //         } catch(e) {
+        //             //swallow
+        //         }
+        //     };
+        //     return new E();
+        // })();
+
+        // iframeManager.generateIframe(`http://localhost:3435/editor/index.html?pageUrl=${pageUrl}`, {
+        //     onDataFromIframe: function () {
+
+        //     }
+        // });
+    </script>
+
+</body>
+
+</html>

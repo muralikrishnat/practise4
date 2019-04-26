@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Editor</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <div>
+            <button type="button" onclick="editorManager.getPageData()">Edit</button>
+        </div>
+        <div>
+
+        </div>
+    </div>
+    <script>
+        var editorManager = (function () {
+            var defaults = {};
+            var E = function () { };
+            E.prototype.load = function (opts) {
+                defaults = Object.assign({}, defaults, opts);
+                if (opts && opts.onMessage) {
+                    window.onmessage = opts.onMessage;
+                }
+            };
+            E.prototype.sendData = function (data) {
+                window.top.postMessage(data, '*')
+            };
+            E.prototype.getPageData = function () {
+                let objToSend = {
+                    method: "PAGE_META"
+                };
+                this.sendData(JSON.stringify(objToSend));
+            };
+            return new E();
+        })();
+
+        let pageUrl = '/index';
+        location.search.replace('?', '').split('&').forEach(f => {
+            if (f.split('=')[0] === 'page' && f.split('=')[1] && f.split('=')[1].length > 0) {
+                pageUrl = f.split('=')[1];
+            }
+        })
+        editorManager.load({
+            pageUrl: pageUrl,
+            onMessage: function (e) {
+                console.log('e', e);
+            }
+        });
+    </script>
+</body>
+
+</html>

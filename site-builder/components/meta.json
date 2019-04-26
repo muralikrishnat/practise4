@@ -1,0 +1,84 @@
+{
+    "components": [
+        {
+            "name": "pagination",
+            "files": [
+                {
+                    "fileName": "html.json",
+                    "fileType": "JSON",
+                    "tag": "HTML"
+                },
+                {
+                    "fileName": "style.less",
+                    "fileType": "LESS",
+                    "tag": "STYLE"
+                },
+                {
+                    "fileName": "scripts.js",
+                    "fileType": "JS",
+                    "tag": "SCRIPT"
+                }
+            ]
+        },
+        {
+            "name": "header",
+            "files": [
+                {
+                    "fileName": "html.html",
+                    "fileType": "HTML",
+                    "tag": "HTML"
+                },
+                {
+                    "fileName": "style.less",
+                    "fileType": "LESS",
+                    "tag": "STYLE"
+                },
+                {
+                    "fileName": "scripts.js",
+                    "fileType": "JS",
+                    "tag": "SCRIPT"
+                }
+            ]
+        },
+        {
+            "name": "footer",
+            "files": [
+                {
+                    "fileName": "html.html",
+                    "fileType": "HTML",
+                    "tag": "HTML"
+                },
+                {
+                    "fileName": "style.less",
+                    "fileType": "LESS",
+                    "tag": "STYLE"
+                },
+                {
+                    "fileName": "scripts.js",
+                    "fileType": "JS",
+                    "tag": "SCRIPT"
+                }
+            ]
+        },
+        {
+            "name": "search-bar",
+            "files": [
+                {
+                    "fileName": "html.html",
+                    "fileType": "HTML",
+                    "tag": "HTML"
+                },
+                {
+                    "fileName": "style.less",
+                    "fileType": "LESS",
+                    "tag": "STYLE"
+                },
+                {
+                    "fileName": "scripts.js",
+                    "fileType": "JS",
+                    "tag": "SCRIPT"
+                }
+            ]
+        }
+    ]
+}

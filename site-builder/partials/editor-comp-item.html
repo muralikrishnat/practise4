@@ -1,0 +1,18 @@
+<div class="c-items__item">
+    <div>
+        <button ta-if="foundComponent"
+            onclick="editorManager.editData('${item.id}', '${i}', 'COMP', '.comp-data-elem-${i}')"> Set Data </button>
+        <button ta-if="foundComponent"
+            onclick="editorManager.saveData('${item.id}', '${i}', 'COMP', '.comp-data-elem-${i}')"> Save Data </button>
+        <button ta-if="foundComponent" onclick="editorManager.removeComponent('${item.id}', '${i}')"> Remove Component
+        </button>
+        <button ta-if="i > 0" onclick="editorManager.moveComp('${item.id}', '${i}', 'UP')"> Move Up </button>
+        <button ta-if="i < compsLength -1" onclick="editorManager.moveComp('${item.id}', '${i}', 'DOWN')"> Move Down
+        </button>
+    </div>
+    <div>
+        <div class="comp-data-elem-${i}">
+            ${dataString}
+        </div>
+    </div>
+</div>

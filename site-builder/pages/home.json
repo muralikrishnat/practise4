@@ -1,0 +1,41 @@
+{
+    "name": "DIV",
+    "data": {
+        "title": "Home Page"
+    },
+    "children": [
+        {
+            "name": "DIV",
+            "attributes": [
+                {
+                    "name": "ta-component",
+                    "value": "header"
+                }
+            ],
+            "data": {
+                "logo": "TA Digital 2"
+            }
+        },
+        {
+            "name": "DIV",
+            "attributes": [
+                {
+                    "name": "ta-component",
+                    "value": "footer"
+                }
+            ]
+        },
+        {
+            "name": "DIV",
+            "attributes": [
+                {
+                    "name": "ta-component",
+                    "value": "header"
+                }
+            ],
+            "data": {
+                "logo": "TechAspect 3"
+            }
+        }
+    ]
+}

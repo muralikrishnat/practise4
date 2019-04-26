@@ -1,4 +1,6 @@
 var nodeStatic = require('node-static');
+var fs = require('fs');
+var path = require('path');
 
 module.exports = function (options) {
     let fePort = options.fePort;
@@ -11,11 +13,25 @@ module.exports = function (options) {
                 body.push(chunk);
             });
         }
-
         request.addListener('end', function () {
             if (request.url.indexOf('api') >= 0) {
                 body = Buffer.concat(body).toString();
-                console.log('body ', body);
+                console.log('url', request.url, request.method);
+
+                if (request.method === 'POST') {
+                    if (request.url.indexOf('/api/page') === 0) {
+                        let jsonData = JSON.parse(body);
+                        let filePath = path.join(__dirname, 'site-builder', 'pages', jsonData.pagePath + '.json');
+                        fs.writeFileSync(filePath, JSON.stringify(jsonData.fileContent, null, 4), {
+                            encoding: 'utf-8'
+                        });
+                    }
+                } else if (request.method === 'GET') {
+                    if (request.url.indexOf('/api/component') === 0) {
+                        let componentMetaPath = path.join(__dirname, 'site-builder', 'components', 'meta.json');
+                        
+                    }
+                }
                 response.writeHead(200, {
                     'Content-Type': 'application/json'
                 });

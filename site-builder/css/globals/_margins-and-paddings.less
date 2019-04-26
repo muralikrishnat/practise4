@@ -1,0 +1,37 @@
+
+.loop(@counter) when (@counter > 0) {
+    .loop((@counter - 1));    // next iteration
+    .p-@{counter} {
+        padding: (5px * @counter); 
+    }
+    .m-@{counter} {
+        margin: (5px * @counter); 
+    }
+
+    .p-@{counter}-top {
+        padding-top: (5px * @counter); 
+    }
+    .p-@{counter}-right {
+        padding-right: (5px * @counter); 
+    }
+    .p-@{counter}-bottom {
+        padding-bottom: (5px * @counter); 
+    }
+    .p-@{counter}-left {
+        padding-left: (5px * @counter); 
+    }
+    .m-@{counter}-top {
+        margin-top: (5px * @counter); 
+    }
+    .m-@{counter}-right {
+        margin-right: (5px * @counter); 
+    }
+    .m-@{counter}-bottom {
+        margin-bottom: (5px * @counter); 
+    }
+    .m-@{counter}-left {
+        margin-left: (5px * @counter); 
+    }
+}
+
+.loop(8);

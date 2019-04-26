@@ -1,1 +1,1 @@
-require('./fe-server')({ fePort: 3435, folder: 'page-rendering' });
+require('./fe-server')({ fePort: 3435, folder: 'site-builder' });

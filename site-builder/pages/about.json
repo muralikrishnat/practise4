@@ -1,0 +1,48 @@
+{
+    "name": "DIV",
+    "data": {
+        "title": "Index Page"
+    },
+    "children": [
+        {
+            "name": "DIV",
+            "attributes": [
+                {
+                    "name": "ta-component",
+                    "value": "header"
+                }
+            ],
+            "data": {
+                "logo": "TA"
+            }
+        },
+        {
+            "name": "DIV",
+            "attributes": [
+                {
+                    "name": "ta-component",
+                    "value": "pagination"
+                },
+                {
+                    "name": "page-count",
+                    "value": "8"
+                }
+            ],
+            "children": [
+                {
+                    "name": "DIV",
+                    "value": "testing"
+                }
+            ]
+        },
+        {
+            "name": "DIV",
+            "attributes": [
+                {
+                    "name": "ta-component",
+                    "value": "footer"
+                }
+            ]
+        }
+    ]
+}
