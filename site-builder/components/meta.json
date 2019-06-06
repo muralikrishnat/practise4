@@ -61,6 +61,26 @@
             ]
         },
         {
+            "name": "carousel",
+            "files": [
+                {
+                    "fileName": "html.html",
+                    "fileType": "HTML",
+                    "tag": "HTML"
+                },
+                {
+                    "fileName": "style.scss",
+                    "fileType": "SCSS",
+                    "tag": "STYLE"
+                },
+                {
+                    "fileName": "scripts.js",
+                    "fileType": "JS",
+                    "tag": "SCRIPT"
+                }
+            ]
+        },
+        {
             "name": "search-bar",
             "files": [
                 {
@@ -79,6 +99,34 @@
                     "tag": "SCRIPT"
                 }
             ]
+        },
+        {
+            "name": "react-comp",
+            "files": [
+                {
+                    "fileName": "react-jsx.jsx",
+                    "fileType": "JSX",
+                    "tag": "SCRIPT"
+                }
+            ]
+        },
+        {
+            "name": "vue-comp",
+            "files": [
+                {
+                    "fileName": "vue-comp.vue",
+                    "fileType": "VUE",
+                    "tag": "VUE",
+                    "name": "vue-comp"
+                },
+                {
+                    "fileName": "vue-sub-comp.vue",
+                    "fileType": "VUE",
+                    "tag": "VUE",
+                    "name": "vue-sub-comp"
+                }
+            ],
+            "compType": "VUE"
         }
     ]
 }

@@ -35,11 +35,18 @@ var sandbox = (function () {
     S.prototype.applyScope = function (elem, scope) {
         scopeManager.applyScope(elem, scope);
     };
+    S.prototype.tryCatch = function (fn) {
+        try {
+            fn();
+        } catch (e) {
+            //swallow
+        }
+    };
     S.prototype.renderPage = function (html) {
         let $pageWrapper = document.querySelector('.page-wrapper');
         pageMeta = html;
         $pageWrapper.innerHTML = domManager.convert(html, 'HTML_STR');
-        
+
         scopeManager.applyScope($pageWrapper, pageMeta.data);
         sandbox.nextTick(() => {
             let pagecomps = document.querySelectorAll('[ta-component]');
@@ -92,6 +99,40 @@ var sandbox = (function () {
         }).then((html) => {
             sandbox.renderPage(html);
         });
+    };
+
+    // TODO: move this to seperate file
+    var pubSubMap = {};
+    S.prototype.subscribe = function (eventName, fn) {
+        if (!pubSubMap[eventName]){
+            pubSubMap[eventName] = [];
+        }
+        fn.timeStamp = (Math.random() * 1000) + '' + (new Date).getTime();
+        pubSubMap[eventName].push(fn);
+
+        return {
+            timeStamp: fn.timeStamp
+        };
+    };
+    S.prototype.publish = function (eventName, data) {
+        if (pubSubMap[eventName] && pubSubMap[eventName] instanceof Array) {
+            pubSubMap[eventName].forEach(fn => {
+                fn(data);
+            });
+        }
+    };
+    S.prototype.unSubscribe = function (eventName, subMeta) {
+        if (pubSubMap[eventName] && pubSubMap[eventName] instanceof Array) {
+            let spliceIndex = null;
+            pubSubMap[eventName].forEach((f, index) => {
+                if (f.timeStamp == subMeta){
+                    spliceIndex = index;
+                }
+            });
+            if (spliceIndex) {
+                pubSubMap[eventName].splice(spliceIndex, 1);
+            }
+        }
     };
     let sandbox = new S();
     return sandbox;

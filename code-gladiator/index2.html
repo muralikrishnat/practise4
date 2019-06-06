@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+
+    <!-- <script>
+
+
+        var input_stdin_array = [
+            '3',
+
+            '6',
+            '10 20 50 100 500 400',
+            '30 20 60 70 90 490',
+
+            '5',
+            '10 20 30 40 50',
+            '40 50 60 70 80',
+
+            '6',
+            '112 243 512 343 90 478',
+            '500 789 234 400 452 150'
+        ];
+
+        var matchResult = function (c, v, p) {
+            let villans = v.split(' ').map(f => f - 0).sort((a, b) => {
+                if (a < b) {
+                    return 1;
+                } else {
+                    return -1;
+                }
+            });
+            var players = p.split(' ').map(g => g - 0).sort((a, b) => {
+                if (a < b) {
+                    return 1;
+                } else {
+                    return -1;
+                }
+            });
+            console.log('pl', players, villans);
+            let isWin = true;
+            for (let i = 0; i < players.length; i++) {
+                if (players[i] > villans[i]) {
+                    isWin = isWin && true;
+                } else {
+                    isWin = false;
+                }
+            }
+            return isWin ? 'WIN' : 'LOSE';
+        };
+        let output = '';
+        let testCasesCount = input_stdin_array[0] - 0;
+        for (let i = 0; i < testCasesCount; i++) {
+            let indexToRead = 1 + (3 * i);
+            output += matchResult(input_stdin_array[indexToRead], input_stdin_array[indexToRead + 1], input_stdin_array[indexToRead + 2], i) + '\n';
+        }
+        console.log(output);
+    </script> -->
+
+    <script>
+        var input_stdin_array = [
+            '7',
+            '8',
+            '4 5 4 3 -9 -999 1000 -1000',
+            '16',
+            '4 5 4 3 0 0 0 -2 -3 -4 0 -6 4 5 4 3',
+            '5',
+            '-1 7 8 -5 4',
+            '4',
+            '3 2 1 -1',
+            '4',
+            '11 12 -2 -1',
+            '4',
+            '4 5 4 3',
+            '4',
+            '5 10 4 -1'
+        ];
+
+        var getArrayElements = function (arr, sIndex) {
+            let ar = [], iLast = sIndex, iSum = 0;
+            for (let i = sIndex; i < arr.length; i++) {
+                if (sIndex != i + 1 && i != iLast + 1 && arr[i] > 0) {
+                    ar.push(arr[i]);
+                    iLast = i;
+                }
+            }
+            ar.reverse();
+            return {
+                elements: ar,
+                sum: ar.reduce((a, b) => {
+                    return b + a;
+                }, 0)
+            };
+        };
+        var checkTestCase = function (c, s, index) {
+            var arr = s.split(' ').map(g => {
+                return g - 0;
+            });
+            let sum = 0, elements = null;
+            for (let i = 0; i < arr.length / 2; i++) {
+                var rte = getArrayElements(arr, i)
+                if (rte.sum > sum) {
+                    sum = rte.sum;
+                    elements = rte.elements;
+                } else if (rte.sum === sum) {
+                    let sIndex = 0;
+                    let eCount = elements.length;
+                    if (rte.elements.length > elements) {
+                        eCount = rte.elements.length;
+                    }
+                    let isMore = null;
+                    for (let j = sIndex; j < eCount; j++) {
+                        if (elements[j] && rte.elements[j]) {
+                            if (elements[j] === rte.elements[j]) {
+
+                            } else if (elements[j] > rte.elements[j]){
+                                isMore = false;
+                                break;
+                            } else if(elements[j] < rte.elements[j]){
+                                isMore = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (isMore) {
+                        elements = rte.elements;
+                    }
+                }
+            }
+            return elements.join('');
+        }
+        let output = '';
+        let testCasesCount = input_stdin_array[0] - 0;
+        for (let i = 1; i <= testCasesCount; i++) {
+            let indexToRead = (2 * i) - 1;
+            output += checkTestCase(input_stdin_array[indexToRead], input_stdin_array[indexToRead + 1], i) + '\n';
+        }
+        console.log(output);
+    </script>
+</body>
+
+</html>

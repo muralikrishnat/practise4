@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>:: UI Marketplace (TARS) ::</title>
+
+    <!-- Will be sharing Later -->
+    <!-- <link rel="stylesheet/less" href="css/global.less" /> -->
+
+    <script src="/js/vendor/less.min.js"></script>
+    <script src="/js/vendor/sass.0.10.13.js"></script>
+
+    <script src="/js/vendor/vue.2.6.10.js"></script>
+    <script src="/js/vendor/http-vue-loader.1.4.0.js"></script>
+</head>
+
+<body>
+    <div class="page-wrapper">
+        <div ta-component="vue-comp" class="vue-comp">
+            <vue-comp></vue-comp>
+        </div>
+    </div>
+    <script>
+        var apiManager = (function () {
+            var A = function () { };
+            A.prototype.get = function (opts) {
+                let url = opts.url;
+                url = url + (url.indexOf('?') >= 0 ? '&' : '?') + 'no-cache=' + (new Date).getTime();
+                return fetch(url).then(response => {
+                    if (opts.isRaw) {
+                        return response.text();
+                    } else {
+                        return response.json();
+                    }
+                });
+            };
+            A.prototype.post = function (opts) {
+                return fetch(opts.url, {
+                    method: 'POST',
+                    mode: 'cors',
+                    cache: 'no-cache',
+                    credentials: 'include',
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    referrer: 'no-referrer',
+                    body: JSON.stringify(opts.body)
+                });
+            }
+            A.prototype.uploadFile = function (opts) {
+                var formData = new FormData();
+                formData.append('path', opts.path);
+                formData.append('file', opts.file)
+                return fetch(opts.url, {
+                    method: 'POST',
+                    body: formData
+                });
+            };
+            return new A();
+
+        })();
+
+        var sandbox = (function () {
+            var components = [], windowLoaded = false;
+            var S = function () { };
+            S.prototype.registerComponent = function (config) {
+                components.push(config);
+                if (windowLoaded) {
+                    config.render();
+                }
+            };
+            S.prototype.onload = function (bootstrapVueFn) {
+
+            };
+            S.prototype.tryCatch = function (fn) {
+                try {
+                    fn();
+                } catch (e) {
+                    //swallow
+                }
+            };
+            return new S();
+        })();
+    </script>
+    <script>
+        httpVueLoader.langProcessor.less = function (lessText) {
+            return new Promise(function(resolve, reject) {
+                less.render(lessText).then(cssResponse => {
+                    resolve(cssResponse.css);
+                });
+            });
+        };
+        var comps = [{
+            "name": "vue-comp",
+            "files": [
+                {
+                    "fileName": "vue-comp.vue",
+                    "fileType": "VUE",
+                    "tag": "VUE",
+                    "name": "vue-comp"
+                }
+            ]
+        }];
+        window.onload = function () {
+            comps.forEach(comp => {
+                let vComps = {};
+                comp.files.forEach(file => {
+                    vComps[file.name] = httpVueLoader(`/comps/` + comp.name + '/' + file.fileName);
+                });
+
+                document.querySelectorAll('[ta-component="' + comp.name + '"]').forEach((elem) => {
+                    elem.setAttribute('data-scope-id', Math.floor(Math.random() * 10000) + '' + (new Date).getTime());
+                    new Vue({
+                        el: '[data-scope-id="' + elem.getAttribute('data-scope-id') + '"]',
+                        components: vComps
+                    });
+                });
+            });
+        };
+    </script>
+</body>
+
+</html>

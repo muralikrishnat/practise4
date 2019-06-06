@@ -61,7 +61,6 @@ function onRequest(req, res) {
 
     req.addListener('end', function () {
       body = Buffer.concat(body).toString();
-      console.log('url', req.url, req.method);
 
       if (req.method === 'POST') {
         if (req.url.indexOf('/api/page') === 0) {
@@ -70,11 +69,16 @@ function onRequest(req, res) {
           fs.writeFileSync(filePath, JSON.stringify(jsonData.fileContent, null, 4), {
             encoding: 'utf-8'
           });
+        } else if (req.method.indexOf('/api/component') === 0) {
+          let jsonData = JSON.parse(body);
+          let filePath = path.join(__dirname, 'site-builder', 'components', jsonData.compName, jsonData.fileName);
+          fs.writeFileSync(filePath, JSON.stringify(jsonData.fileContent, null, 4), {
+            encoding: 'utf-8'
+          });
         }
       } else if (req.method === 'GET') {
         if (req.url.indexOf('/api/component') === 0) {
           let componentMetaPath = path.join(__dirname, 'site-builder', 'components', 'meta.json');
-
         }
         if (req.url.indexOf('/api/page') === 0) {
           let urlParts = url.parse(req.url, true);
@@ -94,10 +98,18 @@ function onRequest(req, res) {
   } else {
     const reqPath = req.url === '/' ? '/index.html' : req.url
     const file = publicFiles.get(reqPath)
-
     // Push with index.html
     if (reqPath === '/index.html') {
-      pushJsFiles(res.stream, "/js/vendor/less.min.js");
+      
+      // pushJsFiles(res.stream, "/js/vendor/less.min.js");
+      // pushJsFiles(res.stream, "/js/vendor/less.min.js");
+      // pushJsFiles(res.stream, "/js/vendor/sass.0.10.13.js");
+      // pushJsFiles(res.stream, "/js/vendor/react.16.8.6.js");
+      // pushJsFiles(res.stream, "/js/vendor/react-dom.16.8.6.js");
+      // pushJsFiles(res.stream, "/js/vendor/vue.2.6.10.js");
+      // pushJsFiles(res.stream, "/js/vendor/http-vue-loader.1.4.0.js");
+      // pushJsFiles(res.stream, "/js/vendor/babel-standalone.6.15.js");
+
       pushJsFiles(res.stream, "/js/global/store-manager.js");
       pushJsFiles(res.stream, "/js/global/scope-manager.js");
       pushJsFiles(res.stream, "/js/global/dom-manager.js");
@@ -123,15 +135,22 @@ function onRequest(req, res) {
       // Serve file
       res.stream.respondWithFD(file.fileDescriptor, file.headers)
     } else {
-      let filePath = url.parse(req.url).pathname;
-      const fileDescriptor = fs.openSync(path.join(__dirname, 'site-builder', filePath), 'r')
-      const stat = fs.fstatSync(fileDescriptor)
-      const contentType = mime.lookup(filePath)
-      res.stream.respondWithFD(fileDescriptor, {
-        'content-length': stat.size,
-        'last-modified': stat.mtime.toUTCString(),
-        'content-type': contentType
-      });
+      let filePath = path.join(__dirname, 'site-builder', url.parse(req.url).pathname);
+      if (fs.existsSync(filePath)) {
+        const fileDescriptor = fs.openSync(filePath, 'r')
+        const stat = fs.fstatSync(fileDescriptor)
+        const contentType = mime.lookup(filePath)
+        res.stream.respondWithFD(fileDescriptor, {
+          'content-length': stat.size,
+          'last-modified': stat.mtime.toUTCString(),
+          'content-type': contentType
+        });
+      } else {
+        res.writeHead(200, {
+          'Content-Type': 'application/json'
+        });
+        res.end("");
+      }
     }
   }
 }

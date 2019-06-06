@@ -5,7 +5,7 @@ const mime = require('mime')
 
 function getFiles(baseDir) {
     const files = new Map()
-
+    console.log('baseDir', baseDir);
     fs.readdirSync(baseDir).forEach((fileName) => {
         const filePath = path.join(baseDir, fileName)
         const fileDescriptor = fs.openSync(filePath, 'r')

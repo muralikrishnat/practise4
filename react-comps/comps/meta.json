@@ -1,0 +1,36 @@
+{
+    "components": [
+        {
+            "name": "react-comp",
+            "files": [
+                {
+                    "fileName": "react-comp.jsx",
+                    "fileType": "JSX",
+                    "tag": "SCRIPT"
+                },
+                {
+                    "fileName": "style.scss",
+                    "fileType": "SCSS",
+                    "tag": "STYLE"
+                }
+            ],
+            "config": {},
+            "data": {}
+        },
+        {
+            "name": "react-comp2",
+            "files": [
+                {
+                    "fileName": "react-comp.jsx",
+                    "fileType": "JSX",
+                    "tag": "SCRIPT"
+                },
+                {
+                    "fileName": "style.less",
+                    "fileType": "LESS",
+                    "tag": "STYLE"
+                }
+            ]
+        }
+    ]
+}

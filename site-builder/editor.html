@@ -8,10 +8,16 @@
     <title>Page Editor</title>
     <link rel="stylesheet/less" href="css/global.less" />
     <link rel="stylesheet/less" href="css/editor.less" />
-    <script src="js/vendor/less.min.js"></script>
+    <script src="/js/vendor/less.min.js"></script>
+    <script src="/js/vendor/sass.0.10.13.js"></script>
+    <script src="/js/vendor/react.16.8.6.js"></script>
+    <script src="/js/vendor/react-dom.16.8.6.js"></script>
+    <script src="/js/vendor/vue.2.6.10.js"></script>
+    <script src="/js/vendor/http-vue-loader.1.4.0.js"></script>
+    <script src="/js/vendor/babel-standalone.6.15.js"></script>
 </head>
 
-<body>
+<body class="inline-edit">
     <div class="page-wrapper">
 
     </div>
@@ -68,6 +74,7 @@
         </div>
     </script>
 
+   
     <script src="/js/index.js"></script>
 
     <script>
@@ -280,10 +287,19 @@
                     `;
                     editorButton.className = 'editor-btn-wrapper';
                     $body.appendChild(editorButton);
+
+
+                    var addComponentBtn = document.createElement('DIV');
+
                 },
                 editPage: function () {
-
-     },
+                    if (document.querySelector('body').classList.contains('inline-edit')){
+                        document.querySelector('body').classList.remove('inline-edit');
+                    } else {
+                        document.querySelector('body').classList.add('inline-edit');
+                    }
+                    
+                },
                 previewPage: function () {
 
                 },

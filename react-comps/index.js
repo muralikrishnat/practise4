@@ -1,0 +1,1 @@
+require('./fe-server')({ fePort: 3436, folder: '.' });

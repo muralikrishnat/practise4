@@ -1,19 +1,15 @@
 {
     "name": "DIV",
     "data": {
-        "title": "Index Page chned"
+        "title": "Index Page changed v2"
     },
     "children": [
         {
             "name": "DIV",
-            "value": "This is dynamic content testing <span ta-bind=\"title\"></span>"
-        },
-        {
-            "name": "DIV",
             "attributes": [
                 {
                     "name": "ta-component",
-                    "value": "footer"
+                    "value": "vue-comp"
                 }
             ]
         },
@@ -22,21 +18,21 @@
             "attributes": [
                 {
                     "name": "ta-component",
-                    "value": "footer"
-                }
-            ]
-        },
-        {
-            "name": "DIV",
-            "attributes": [
-                {
-                    "name": "ta-component",
-                    "value": "header"
+                    "value": "react-comp"
                 }
             ],
             "data": {
-                "logo": "TA Digital v666"
+                "name": "Murali"
             }
+        },
+        {
+            "name": "DIV",
+            "attributes": [
+                {
+                    "name": "ta-component",
+                    "value": "carousel"
+                }
+            ]
         }
     ]
 }
