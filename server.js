@@ -1,1 +1,2 @@
-require('./fe-server')({ fePort: 3435, folder: 'code-gladiator' });
+require('./fe-server')({ fePort: 80, folder: 'server-events' });
+require('./ssl-server')({ folder: 'server-events' });

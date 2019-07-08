@@ -1,0 +1,167 @@
+body{border-bottom:20px solid #1d4b6b;font-family: Arial, Helvetica, sans-serif;}
+.ign-header__logo{display: block;
+   
+    min-width: 160.2827008807px;
+    height: 60px;
+    z-index: 10;
+    margin: 0;padding-top: 9px;padding-bottom:8px}
+
+.ign-header__logo img{width:144px}
+#intro{background:url(https://image.s1.sfmc-content.com/lib/fe6315707c6c077f7511/m/1/4a23d8e4-9e9f-4c2c-8e6a-90cd19c7ab7b.jpg) no-repeat scroll center top;color:#fff;padding-top:60px;padding-bottom: 60px;background-size:100%}
+#second-section{padding-top:25px;padding-bottom:25px}
+h3{color:#1d4b6b;font-weight:600;margin-top:0px}
+body, p, .blue{color:#1d4b6b}
+.bld{font-weight: 600}
+.name {
+   
+    line-height: 24px;
+    color: #bbbbbb;
+    font-weight: 600;
+    min-height:76px;
+}
+.checkbox label{color:#7a7a7a}
+.product-block{background:#f9f9f9;border-radius:5px;padding:10px}
+.selectionbox{width:100%}
+.selectionbox select{background-color: #fff;
+    border:1px solid transparent transparent #1d4b6b transparent;font-size:14px;
+    border-radius: 5px;height:34px;padding:6px 12px;display:block;width:84%;margin:auto}
+.multiselect{background-color: #fff!important;
+    border:1px solid transparent transparent #1d4b6b transparent!important;width:232px;display: inline-block!important}
+.custm2 select{width:100%}
+.checkbox {
+   
+    margin: 12px auto;
+    text-align: left;
+}
+.product-meta .checkbox{width:150px}
+/** selection box css **/
+.custom-select {
+  position: relative;width:auto;border:1px solid #8aa29a;border-radius:5px;color:#1d4b6b;margin:20px auto 10px;
+}
+
+.custom-select select {
+  display: none; /*hide original SELECT element:*/
+}
+
+.select-selected {
+  background-color:#fff;border:0px solid #8aa29a;border-radius:5px;
+}
+
+/*style the arrow inside the select element:*/
+.select-selected:after {
+  position: absolute;
+  content: "";
+  top: 12px;
+  right: 10px;
+  border: solid black;
+  border-width: 0 1px 1px 0;
+  display: inline-block;
+  padding: 5px;
+  transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+}
+
+/*point the arrow upwards when the select box is open (active):*/
+.select-selected.select-arrow-active:after {
+  border: solid black;
+  border-width: 0 1px 1px 0;
+  display: inline-block;
+  padding: 5px;
+  transform: rotate(-135deg);
+  -webkit-transform: rotate(-135deg);
+  top: 16px;
+}
+
+/*style the items (options), including the selected item:*/
+.select-items div,.select-selected {
+  color: #1d4b6b;
+  padding: 8px 16px;
+ 
+  border-color: transparent transparent #1d4b6b transparent;
+  cursor: pointer;
+  user-select: none;
+}
+
+/*style items (options):*/
+.select-items {
+  position: absolute;
+  background-color: #ccc;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 99;
+}
+.product-block:hover{background:#7ae1bf}
+.product-block:hover .name{color:#1d4b6b}
+.product-block:hover .checkbox label{color:#1d4b6b}
+.newproductblock{background:#7ae1bf}
+.newproductblock .name{color:#1d4b6b}
+.newproductblock .checkbox label{color:#1d4b6b}
+/*hide the items when the select box is closed:*/
+.select-hide {
+  display: none;
+}
+
+.select-items div:hover, .same-as-selected {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+.section{padding:25px 0}
+.arrow{ padding-top: 25px}
+#thirdsection{
+  background: #f2f2f2;
+}
+.form-group{margin-top:10px}
+.form-group label{min-width: 100px}
+.checkbox .chngemail{color:#ed6755;font-size:12px}
+.next{margin-top:20px}
+.regstr .checkbox{text-align: center}
+.regstr .checkbox label{color:#ed6755;}
+#lastsection{background: #f2f2f2}
+.close{color: #1d4b6b!important;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 1px solid #1d4b6b!important;
+    opacity: 1;
+    z-index: 9;
+    position: absolute;
+    right: 0px;
+    margin: 5px; }
+.modal{top:30%}
+.modal-body{color: #1d4b6b!important;text-align: center;padding: 25px 0 10px;}
+.modal-body span{color:#7ae1bf}
+.modal-body p{font-size:16px}
+.modal-body h6{font-size:13px}
+.modal-body h5{font-weight:600;font-size:18px}
+.btn-primary{background:#7ae1bf;font-weight:600;color:#1d4b6b;border:1px solid #7ae1bf;min-width:150px;font-size:15px}
+.emailform{width:200px;display: inline-block}
+.modal-checkbox{width:210px;margin:15px auto}
+/** disable section **/
+#arrow, #thirdsection, #fourthsection, #lastsection{display:none}
+/** disable section ends **/
+@media(min-width:1200px){header .container{max-width:1280px;width:1218px;padding:0 25px}
+  
+}
+@media(min-width:1400px){
+  #intro{background:url(https://image.s1.sfmc-content.com/lib/fe6315707c6c077f7511/m/1/4a23d8e4-9e9f-4c2c-8e6a-90cd19c7ab7b.jpg) no-repeat scroll center -104px;}
+}
+@media (min-width: 992px){
+.container {
+    max-width: 970px;
+}
+  .custom-select{width:250px} 
+  .custm2{display: inline-block;width:283px;margin-top:0px}
+}
+@media (min-width: 768px){
+.form-inline .form-control {
+    min-width: 282px;
+}
+}
+@media(max-width:768px){
+  #intro{background:url(https://image.s1.sfmc-content.com/lib/fe6315707c6c077f7511/m/1/a10193b2-e03c-46df-a069-b15f7dfb4a66.jpg) no-repeat scroll center top;}
+  .product-block{margin-bottom:10px}
+}
+/** selection box css ends **/
+@media(max-width:1200px){
+  #intro{background-size:cover} 
+}

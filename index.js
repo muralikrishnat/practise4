@@ -32,7 +32,7 @@ function push(stream, path) {
 
 
 function pushJsFiles(stream, filePath) {
-  const fileDescriptor = fs.openSync(path.join(PUBLIC_PATH, filePath), 'r');
+  const fileDescriptor = fs.openSync(path.join(PUBLImimeC_PATH, filePath), 'r');
   const stat = fs.fstatSync(fileDescriptor);
   const contentType = mime.lookup(filePath);
   let file = {

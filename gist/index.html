@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        var intervalRef = null,
+            reqResetTimer = null,
+            requestLimit = 2,
+            requestTimeLimitInMiilliSec = 5000;
+
+        var requestCount = 0,
+            requestArray = [];
+        var processRequest = function () {
+            console.log('checking...', requestCount, requestLimit, requestArray.length);
+            if (requestCount < requestLimit && requestArray.length > 0) {
+                requestCount += 1;
+                let reqToProcess = requestArray.shift();
+                console.log('processing request... ', reqToProcess.time);
+                processRequest();
+            }
+
+            if (!reqResetTimer) {
+                reqResetTimer = setInterval(() => {
+                    requestCount = 0;
+                    processRequest();
+                }, requestTimeLimitInMiilliSec);
+            }
+        };
+        var makeRequest = function (opts) {
+            requestArray.push(opts);
+            processRequest();
+        };
+        var clearIntervals = function () {
+            intervalRef && clearInterval(intervalRef);
+            reqResetTimer && clearInterval(reqResetTimer);
+        };
+        // intervalRef = setInterval(() => {
+        //     let dt = new Date();
+        //     makeRequest({ time: 'H- ' + dt.getHours() + ':M- ' + dt.getMinutes() + ':S- ' + dt.getSeconds() + ':MS- ' + dt.getMilliseconds() });
+        // }, 1000);
+
+
+        // for (let i = 0; i < 10; i++) {
+        //     setTimeout(() => {
+        //         let dt = new Date();
+        //         makeRequest({ time: 'req-' + i});
+        //     }, (i + 1) * 1000);
+        // }
+
+
+        var requestManager = (function () {
+            let config = {
+                
+            };
+            var R = function () { };
+            R.prototype.init = function () { };
+            R.prototype.makeRequest = function () { };
+            R.prototype.stats = function () { };
+
+            return new R();
+        })();
+    </script>
+</body>
+
+</html>
