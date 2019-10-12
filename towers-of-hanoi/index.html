@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Towers of Hanoi</title>
+  <link rel="stylesheet/less" href="/css/style.less" />
+  <script src="/js/vendor/less.min.js"></script>
+</head>
+
+<body onload="bodyLoaded()">
+  <div class="page flex-col">
+    <div class="page__top flex-1">
+      <div>
+        <button type="button" onclick="startGame()">
+            Start
+        </button>
+      </div>
+      <div>
+        Moves: <span m-bind="noOfMoves"></span>
+      </div>
+    </div>
+    <div class="page__content flex-5 tower-container">
+      <div class="tower-container__board tower-board">
+        <div class="tower-board__tower tower1" data-tower="1"></div>
+        <div class="tower-board__tower tower2" data-tower="2"></div>
+        <div class="tower-board__tower tower3" data-tower="3"></div>
+      </div>
+    </div>
+    <div class="page__bottom flex-1">
+
+    </div>
+  </div>
+
+
+  <script>
+    var gameEngine = (function() {
+      var _defaults = {
+        noOfDisks: 3,
+        timeLimit: 1 * 60 * 1000,
+        allowedMoves: 18,
+        noOfTowers: 3
+      };
+      var noOfMoves = 0;
+      var towersData = [];
+      var dragData = {
+        dragStartIndex: null,
+        dragEndIndex: null
+      }
+      var timeoutTimer = null;
+      var getDisk = function(diskData) {
+        var diskElem = document.createElement("DIV");
+        diskElem.classList.add('disk');
+        diskElem.classList.add('size-' + diskData.size);
+        var diskItem = document.createElement("DIV");
+        diskItem.classList.add("disk__item");
+        diskItem.innerHTML = diskData.diskName;
+        diskElem.appendChild(diskItem);
+        return diskElem;
+      };
+      var renderToDom = function() {
+        for (var i = 0; i < towersData.length; i++) {
+          var towerElem = document.querySelector('.tower' + (i + 1));
+          if (towerElem) {
+            towerElem.innerHTML = "";
+            for (let j = towersData[i].disks.length - 1; j >= 0; j--) {
+              towerElem.appendChild(getDisk(towersData[i].disks[j]));
+            }
+          }
+        }
+        document.querySelector('[m-bind="noOfMoves"]').innerHTML = noOfMoves + '';
+      };
+      var resetDisks = function() {
+        towersData = [];
+        noOfMoves = 0;
+        for (let i = 0; i < _defaults.noOfTowers; i++) {
+          towersData.push({
+            towerIndex: (i + 1),
+            disks: []
+          });
+        }
+        var disks = [];
+        for (let j = 0; j < _defaults.noOfDisks; j++) {
+          disks.push({
+            size: (j + 1),
+            diskName: (j + 1)
+          });
+        }
+        towersData[0].disks = disks;
+        document.querySelector('.tower-board').setAttribute('data-count', towersData.length);
+      };
+      var doneDragJob = function() {
+        if (dragData.dragStartIndex != dragData.dragEndIndex) {
+          var towerStart = towersData.filter(item => item.towerIndex === dragData.dragStartIndex);
+          if (towerStart) {
+            towerStart = towerStart[0];
+          }
+
+          var towerEnd = towersData.filter(item => item.towerIndex === dragData.dragEndIndex);
+          if (towerEnd) {
+            towerEnd = towerEnd[0];
+          }
+
+          if (towerStart && towerEnd) {
+            var fromDisks = towerStart.disks;
+            if (fromDisks.length > 0) {
+              var moveDisk = fromDisks.pop();
+              towerEnd.disks.push(moveDisk);
+              noOfMoves += 1;
+              renderToDom();
+            }
+          }
+        }
+      };
+      var E = function() {};
+      E.prototype.init = function(config) {
+        _defaults = Object.assign({}, config);
+        document.querySelector('.tower-board').addEventListener('touchstart', function(event) {
+          var targetElem = event.target;
+          var towerIndex = null;
+          if (targetElem.getAttribute('data-tower')) {
+            towerIndex = parseInt(targetElem.getAttribute('data-tower'));
+          } else {
+            var closestElem = targetElem.closest('[data-tower]');
+            if (closestElem.getAttribute('data-tower')) {
+              towerIndex = parseInt(closestElem.getAttribute('data-tower'));
+            }
+          }
+          dragData.dragStartIndex = towerIndex;
+        });
+        document.querySelector('.tower-board').addEventListener('touchend', function(event) {
+          var towerIndex = null;
+          var changedTouch = event.changedTouches[0];
+          var targetElem = document.elementFromPoint(changedTouch.clientX, changedTouch.clientY);
+          if (targetElem.getAttribute('data-tower')) {
+            towerIndex = parseInt(targetElem.getAttribute('data-tower'));
+          } else {
+            var closestElem = targetElem.closest('[data-tower]');
+            if (closestElem.getAttribute('data-tower')) {
+              towerIndex = parseInt(closestElem.getAttribute('data-tower'));
+            }
+          }
+          dragData.dragEndIndex = towerIndex;
+          doneDragJob();
+        });
+      };
+      E.prototype.start = function() {
+        timeoutTimer = setTimeout(function() {
+          console.log("timeout");
+        }, _defaults.timeLimit);
+        resetDisks();
+        renderToDom();
+      };
+      return new E();
+    })()
+
+    function bodyLoaded() {
+      gameEngine.init({
+        noOfDisks: 3,
+        timeLimit: 1 * 60 * 1000,
+        allowedMoves: 18,
+        noOfTowers: 3
+      });
+
+      gameEngine.start();
+    }
+
+    function startGame() {
+      gameEngine.start();
+    }
+  </script>
+</body>
+
+</html>
