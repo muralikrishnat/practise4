@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+  <meta charset="utf-8">
+  <title>Simple Polylines</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+    
+    #map {
+      height: 100%;
+    }
+    /* Optional: Makes the sample page fill the window. */
+    
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+    
+    .flex {
+      display: flex;
+    }
+    
+    .flex-sb {
+      justify-content: space-between;
+    }
+    
+    .search-container {
+      position: fixed;
+      left: 25%;
+      width: 50%;
+      top: 10px;
+      background-color: white;
+      height: 50px;
+      box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px -1px;
+    }
+    
+    .flex-1 {
+      flex: 1;
+    }
+    
+    .flex-2 {
+      flex: 2;
+    }
+    
+    .input-full {
+      height: 100%;
+      width: 100%;
+      font-size: 20px;
+      padding-left: 10px;
+      border: none;
+    }
+    
+    .btn-search {
+      width: 100%;
+      height: 100%;
+      background-color: #1a73e8;
+      color: white;
+      font-size: 24px;
+      letter-spacing: 3.2px;
+    }
+    
+    .input-full::-webkit-calendar-picker-indicator {
+      display: none;
+    }
+    
+    .border-left {
+      border-left: 1px solid #ccc;
+    }
+  </style>
+</head>
+
+<body onload="bodyLoad()">
+  <div id="map"></div>
+  <div class="search-container flex flex-sb">
+    <div class="flex-2 form-field">
+      <input class="input-full port-names" name="fromport" placeholder="Select Port" list="fromports" />
+      <datalist id="fromports">
+      </datalist>
+    </div>
+
+    <div class="flex-2 form-field">
+      <input class="input-full port-names" name="destinationort" placeholder="Select Port" list="destinationports" />
+      <datalist id="destinationports">
+      </datalist>
+    </div>
+
+    <div class="flex-1">
+      <button class="btn-search"> Search </button>
+    </div>
+
+  </div>
+
+  <script src="/js/app.js"></script>
+  <script>
+    function initMap() {
+      map = new google.maps.Map(document.getElementById('map'), {
+        zoom: 3,
+        center: {
+          lat: 0,
+          lng: -180
+        },
+        mapTypeId: 'terrain'
+      });
+      mapLoaded = true;
+      bindEvents();
+    }
+  </script>
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDtwbW0eanyZcskPwLbh6Afe0JQqzYx7cQ&callback=initMap">
+  </script>
+
+</body>
+
+</html>
